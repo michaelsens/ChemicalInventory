@@ -23,13 +23,20 @@ def scrape_chem_page(css, url):
     return driver.find_element(by=By.CSS_SELECTOR, value=css)
 
 def find_chem_info(cas):
+    print(cas)
+    attributeList = []
     url = generate_chem_url(cas)
     IUPACName = scrape_chem_page("#IUPAC-Name p", url).text
+    attributeList.append(IUPACName)
     print(IUPACName)
     hazards_parent = scrape_chem_page("#main-content > div > div > div > div.summary.p-md-top.p-md-bottom > div > table > tbody > tr:nth-child(3) > td > a > p", url)
-    child = hazards_parent.find_elements_by_xpath("./child::*")
-    print(child[0].get_attribute("data-caption"))
-    print(child[1].get_attribute("data-caption"))
+    hazards_children = hazards_parent.find_elements_by_xpath("./child::*")
+    hazards_list = []
+    for hazard in hazards_children:
+        hazards_list.append(hazard.get_attribute("data-caption"))
+        print(hazard.get_attribute("data-caption"))
+    attributeList.extend(hazards_list)
+    return attributeList
 
 
-find_chem_info('106-99-0')
+#find_chem_info('106-99-0')
